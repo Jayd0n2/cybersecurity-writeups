@@ -1,0 +1,78 @@
+# 🐘 Understanding SQL – HackingHub Writeup
+
+**Platform:** HackingHub  
+**Topic:** SQL Basics & Intro to SQL Injection  
+**Module:** Understanding SQL  
+**Date:** YYYY-MM-DD  
+**Status:** ✅ Completed (1/1 Flag Found)
+
+---
+
+## 📚 Overview
+
+This introductory module focuses on the **fundamentals of SQL**, laying the groundwork for understanding and exploiting SQL Injection vulnerabilities. The hub combines a short video with an interactive practice lab.
+
+The main goals were to:
+- Learn how SQL queries work
+- Practice data selection and filtering
+- Understand how the `UNION` operator functions
+- Use this foundational knowledge to begin identifying and exploiting SQL Injection flaws
+
+---
+
+## 🧠 Key Concepts Learned
+
+- **SQL Basics**:  
+  - `SELECT`, `FROM`, and `WHERE` clauses
+  - Filtering results based on conditions
+  - Querying specific columns
+
+- **UNION Operator**:
+  - Combines results of two queries
+  - Useful for retrieving data from unauthorized tables when exploiting SQLi
+
+- **Database Enumeration Strategy**:
+  - Start with injecting simple payloads
+  - Enumerate number of columns via `ORDER BY`
+  - Use `UNION SELECT` to retrieve hidden data
+  - Identify injectable parameters without using provided helper functions
+
+---
+
+## 🧪 Lab Task Summary
+
+### 🎯 Objective:
+Retrieve the flag from the `flag` table **without using any helper function**.
+
+### 🔍 Approach:
+
+1. **Initial Injection Testing**  
+   Injected `' OR '1'='1` or `1'--` to confirm if the input was vulnerable.
+
+2. **Column Enumeration**  
+   Used payloads like:
+   ```sql
+   ' ORDER BY 1--  
+   ' ORDER BY 2--  
+   ' ORDER BY 3--  
+…until an error occurred, indicating the number of columns.
+
+3. UNION-Based Enumeration
+Crafted a UNION SELECT query to match the number of columns and extract data:
+' UNION SELECT 1, flag_column FROM flag-- 
+
+4. Retrieved Flag
+Successfully pulled the flag from the vulnerable query.
+
+🏁 Flag
+✅ Flag Found: FOUND
+
+📝 Reflections
+Gained confidence in crafting manual SQL queries for enumeration and data extraction.
+Better understanding of how logical operators and query structure work together.
+Reinforced the importance of identifying the number of columns before using UNION.
+
+🔧 Tools Used
+Web browser (interactive HackingHub environment)
+
+Manual payload testing (no automated tools)
