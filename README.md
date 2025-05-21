@@ -7,7 +7,8 @@ This repository contains my personal learning notes and writeups from platforms 
 ## 📂 Directory Structure
 
 - [`tryhackme/`](./tryhackme): Writeups for various THM rooms
-- [`hackthebox/`](./hackthebox): Writeups for HTB machines (retired only)
+- [`hackthebox/`](./hackthebox): Writeups for HTB machines
+- [`hackinghub/`](./hackinghub): Writeups for HackingHub hubs
 - [`tools/`](./tools): Notes on commonly used cybersecurity tools
 - [`techniques/`](./techniques): Summaries of practical attack techniques (privilege escalation, web exploitation, etc.)
 
