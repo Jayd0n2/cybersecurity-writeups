@@ -1,0 +1,78 @@
+#**🔐 Hack The Box – Web Requests GET**
+##Module Overview
+This module introduced foundational concepts in how web applications handle HTTP requests, with a focus on HTTP GET requests, analyzing web traffic using browser devtools and cURL and extracting data through URL GET parameters.
+
+##**Exercises & Observations**
+###1. Monitoring Web Requests
+Using browser developer tools (Network tab), I visited a website and observed how multiple HTTP requests are triggered—not just the initial GET request. This is crucial in real-world web application testing, as it allows us to understand how frontend elements interact with backend endpoints.
+
+Note: Clearing previous requests and monitoring network activity in real-time helps isolate important endpoints such as login.php, api/, or search.php.
+
+###2. HTTP Basic Authentication
+A provided challenge page required HTTP Basic Auth credentials (admin:admin). This differs from typical form-based authentication (which uses POST methods). Basic Auth is handled directly by the webserver via the WWW-Authenticate header.
+
+Unauthorized Request:
+curl -i http://<SERVER_IP>:<PORT>/
+
+Response:
+HTTP/1.1 401 Authorization Required
+WWW-Authenticate: Basic realm="Access denied"
+
+Authorized Request (using -u):
+curl -u admin:admin http://<SERVER_IP>:<PORT>/
+
+Alternate method using URL:
+curl http://admin:admin@<SERVER_IP>:<PORT>/
+
+Manual Authorization Header:
+curl -H "Authorization: Basic YWRtaW46YWRtaW4=" http://<SERVER_IP>:<PORT>/
+
+YWRtaW46YWRtaW4= is the base64 encoding of admin:admin.
+
+###3. Using Authorization Header
+By adding the -v flag to a curl request, I observed how headers like Authorization: Basic YWRtaW46YWRtaW4= are sent to the server:
+curl -v http://admin:admin@<SERVER_IP>:<PORT>/
+This confirmed that the credentials are sent in the headers—encoded, not encrypted. In modern applications, we would expect a Bearer token instead (e.g., JWT).
+
+###4. Searching With GET Parameters
+After logging in, the application exposed a search function that triggered requests like:
+GET /search.php?search=le
+This revealed that the page communicates with the backend using GET parameters in the URL. This endpoint returned city names based on the search query.
+
+Intercepted Request Example:
+curl 'http://<SERVER_IP>:<PORT>/search.php?search=le' \
+-H 'Authorization: Basic YWRtaW46YWRtaW4='
+This allowed me to craft custom queries without using the browser interface.
+
+###5. Final Flag Capture
+Objective: Use browser devtools to intercept the search request, replicate it with curl, and search for the keyword flag.
+
+Steps Taken:
+Logged into the page using admin:admin.
+Opened devtools > Network tab > Observed request sent to search.php.
+Reproduced the request with curl:
+
+curl 'http://redacted/search.php?search=flag' \
+-H 'Authorization: Basic YWRtaW46YWRtaW4='
+
+**✅ Flag Retrieved:**
+HTB{curl_redacted}
+
+##<ins>Key Takeaways<ins/>
+HTTP Basic Auth is insecure for sensitive operations due to unencrypted credential transmission.
+
+Developer tools and curl are essential for web recon and understanding backend logic.
+
+Many search features and form fields send data using predictable GET/POST parameters that can be manipulated manually.
+
+Base64-encoded credentials are easily reversible and should not be mistaken for encryption.
+
+##<ins>Recommendations for Real-World Application Security<ins/>
+Avoid Basic Auth for public-facing applications—use OAuth2 or JWT instead.
+
+Implement HTTPS to prevent sniffing credentials in transit.
+
+Validate inputs server-side to prevent parameter tampering or injection attacks.
+
+Limit error details in unauthorized responses to reduce information leakage.
+
